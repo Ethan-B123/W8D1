@@ -7,8 +7,8 @@ class User < ApplicationRecord
   after_initialize :ensure_session
 
   def self.find_by_creds(creds)
-    if @user = User.find_by(username: creds.username)
-      return @user if @user.is_password?(creds.password)
+    if @user = User.find_by(username: creds[:username])
+      return @user if @user.is_password?(creds[:password])
       false
     end
   end
@@ -23,7 +23,7 @@ class User < ApplicationRecord
   end
 
   def is_password?(check_pass)
-    BCrypt::Password.new(:password_digest).is_password?(check_pass)
+    BCrypt::Password.new(password_digest).is_password?(check_pass)
   end
 
   def password=(new_pass)

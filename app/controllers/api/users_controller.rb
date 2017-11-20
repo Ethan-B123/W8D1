@@ -2,11 +2,7 @@ class Api::UsersController < ApplicationController
   def create
     @user = User.new(user_params)
     if !@user.save
-      @errors = {
-        messages: @user.errors.full_messages,
-        status: 422
-      }
-      render json: @errors
+      render json: @user.errors.full_messages, status: 422
     else
       session[:session_token] = @user.session_token
       render :show

@@ -3,10 +3,9 @@ class Api::SessionsController < ApplicationController
     @user = User.find_by_creds(user_params)
     if !@user
       @errors = {
-        messages: ["invalid username or password"],
-        status: 401
+        messages: ["invalid username or password"]
       }
-      render json: @errors
+      render json: @errors, status: 422
     else
       session[:session_token] = @user.session_token
       render :show
@@ -14,8 +13,16 @@ class Api::SessionsController < ApplicationController
   end
 
   def destroy
-    current_user.reset_session
-    session[:session_token] = null
+    if current_user
+      current_user.reset_session
+      session[:session_token] = nil
+      render json: {}
+    else
+      @errors = {
+        messages: ["Not logged in"]
+      }
+      render json: @errors, status: 422
+    end
   end
 
   private
